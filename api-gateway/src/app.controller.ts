@@ -3,8 +3,6 @@ import {
   ClientProxy,
   MessagePattern,
   Payload,
-  Ctx,
-  RedisContext,
 } from '@nestjs/microservices';
 
 @Controller()
@@ -15,12 +13,12 @@ export class AppController {
   ) {}
 
   @MessagePattern('event_created')
-  handleEntryExitRequest(data: any) {
+  handleEntryExitRequest(data: Record<string, unknown>) {
     return this.eventServiceClient.send('event_created', data);
   }
 
   @MessagePattern('notification')
-  getNotifications(@Payload() data: number[], @Ctx() context: RedisContext) {
-    console.log(`Channel: ${context.getChannel()} ${JSON.stringify(data)}`);
+  getNotifications(@Payload() data: number[]) {
+    console.log(`Message: ${JSON.stringify(data)}`);
   }
 }

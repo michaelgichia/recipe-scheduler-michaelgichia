@@ -7,10 +7,20 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
     ClientsModule.register([
       {
         name: 'EVENT_CREATED',
-        transport: Transport.REDIS,
+        transport: Transport.RMQ,
         options: {
-          host: 'localhost',
-          port: 6379,
+          urls: ['amqp://rabbitmq:5672'],
+          queue: 'entry-exit-queue',
+          queueOptions: {
+            durable: false,
+          },
+          prefetchCount: 1,
+          persistent: true,
+          noAck: false,
+          socketOptions: {
+            keepAlive: true,
+          },
+          maxConnectionAttempts: 5,
         },
       },
     ]),
