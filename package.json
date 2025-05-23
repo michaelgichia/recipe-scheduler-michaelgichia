@@ -13,10 +13,7 @@
     "lint": "npm run lint --workspaces",
     "clean": "docker-compose down -v && docker system prune -f"
   },
-  "workspaces": [
-    "packages/*",
-    "services/*"
-  ],
+  "workspaces": ["packages/*"],
   "devDependencies": {
     "@types/jest": "^29.5.14",
     "@types/node": "^22.15.21",

@@ -5,8 +5,8 @@ import {
   UpdateEventDto,
   MESSAGE_PATTERNS,
   ApiResponse,
-} from '../../../shared/types';
-import { GetEventsQuery } from '../../../shared/validation';
+  GetEventsQuery,
+} from '@recipe-scheduler/shared';
 import { EventsService } from './events.service';
 import { Event } from './entities/event.entity';
 

@@ -1,4 +1,4 @@
-export * from "./types";
+export * from './types'
 export {
   CreateEventSchema,
   UpdateEventSchema,
@@ -6,4 +6,10 @@ export {
   GetEventsQuerySchema,
   CreateDeviceSchema,
   PushNotificationSchema,
-} from "./validation";
+  GetEventsQuery,
+  CreateEventDto,
+  UpdateEventDto,
+  EventParams,
+  CreateDeviceDto,
+  PushNotificationPayload,
+} from './validation'

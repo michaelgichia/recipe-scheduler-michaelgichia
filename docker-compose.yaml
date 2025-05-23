@@ -18,19 +18,20 @@ services:
 
   api-gateway:
     build:
-      context: ./api-gateway
+      context: ./packages/api-gateway
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
     environment:
       - NODE_ENV=development
+      - REDIS_URL=redis://redis:6379
     depends_on:
       rabbitmq:
         condition: service_healthy
     networks:
       - api_network
     volumes:
-      - ./api-gateway:/app
+      - ./packages/api-gateway:/app
       - /app/node_modules
 
 networks:
