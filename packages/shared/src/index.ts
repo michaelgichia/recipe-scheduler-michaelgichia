@@ -1,4 +1,12 @@
-export * from './types'
+export {
+  QUEUE_NAMES,
+  MESSAGE_PATTERNS,
+  Event,
+  Device,
+  ReminderJob,
+  ApiResponse,
+} from './types'
+
 export {
   CreateEventSchema,
   UpdateEventSchema,

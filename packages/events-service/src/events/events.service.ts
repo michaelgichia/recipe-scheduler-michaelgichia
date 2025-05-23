@@ -1,12 +1,13 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ApiResponse, CreateEventDto } from '../../../shared/types';
+import { ApiResponse, CreateEventDto } from '@recipe-scheduler/shared';
 import { Event } from './entities/event.entity';
 
 @Injectable()
 export class EventsService {
   constructor(
-    @Inject('EVENT_SERVICE')
+    @InjectRepository(Event)
     private readonly eventsRepository: Repository<Event>,
   ) {}
 
@@ -26,7 +27,8 @@ export class EventsService {
     } catch (error: unknown) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'An unknown error occurred',
+        error:
+          error instanceof Error ? error.message : 'An unknown error occurred',
       };
     }
   }
