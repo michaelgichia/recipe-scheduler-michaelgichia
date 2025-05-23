@@ -13,11 +13,5 @@ COPY . .
 # Install dependencies
 RUN npm install
 
-# Build the project
-RUN npm run build
-
-# Expose the port that the service will use
-EXPOSE 3000
-
 # Command to run the application
 CMD ["node", "dist/main"]

@@ -6,21 +6,11 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
   imports: [
     ClientsModule.register([
       {
-        name: 'EVENT_CREATED',
-        transport: Transport.RMQ,
+        name: 'EVENT_SERVICE',
+        transport: Transport.TCP,
         options: {
-          urls: ['amqp://rabbitmq:5672'],
-          queue: 'entry-exit-queue',
-          queueOptions: {
-            durable: false,
-          },
-          prefetchCount: 1,
-          persistent: true,
-          noAck: false,
-          socketOptions: {
-            keepAlive: true,
-          },
-          maxConnectionAttempts: 5,
+          host: process.env.EVENT_SERVICE_HOST || 'event-service',
+          port: parseInt(process.env.EVENT_SERVICE_PORT || '3001'),
         },
       },
     ]),

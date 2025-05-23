@@ -20,13 +20,18 @@ services:
     build:
       context: ./api-gateway
       dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
     depends_on:
       rabbitmq:
         condition: service_healthy
-    ports:
-      - "3003:3003"
     networks:
       - api_network
+    volumes:
+      - ./api-gateway:/app
+      - /app/node_modules
 
 networks:
   api_network:

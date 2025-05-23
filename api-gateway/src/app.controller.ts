@@ -1,24 +1,47 @@
-import { Controller, Inject } from '@nestjs/common';
 import {
-  ClientProxy,
-  MessagePattern,
-  Payload,
-} from '@nestjs/microservices';
+  Controller,
+  Post,
+  Body,
+  Inject,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 
-@Controller()
+import { ClientProxy } from '@nestjs/microservices';
+import { CreateEventSchema } from '../../shared/validation';
+import { Event, MESSAGE_PATTERNS } from '../../shared/types';
+import { firstValueFrom } from 'rxjs';
+
+@Controller('events')
 export class AppController {
   constructor(
-    @Inject('EVENT_CREATED')
-    private readonly eventServiceClient: ClientProxy,
+    @Inject('EVENT_SERVICE')
+    private readonly eventService: ClientProxy,
   ) {}
 
-  @MessagePattern('event_created')
-  handleEntryExitRequest(data: Record<string, unknown>) {
-    return this.eventServiceClient.send('event_created', data);
-  }
+  @Post()
+  async createEvent(@Body() createEventDto: any): Promise<Event> {
+    try {
+      // Validate payload
+      const validatedData = CreateEventSchema.parse(createEventDto);
 
-  @MessagePattern('notification')
-  getNotifications(@Payload() data: number[]) {
-    console.log(`Message: ${JSON.stringify(data)}`);
+      const result = await firstValueFrom(
+        this.eventService.send(MESSAGE_PATTERNS.CREATE_EVENT, validatedData),
+      );
+
+      if (!result.success) {
+        throw new HttpException(result.error, HttpStatus.BAD_REQUEST);
+      }
+
+      return result.data;
+    } catch (error) {
+      if (error.name === 'ZodError') {
+        throw new HttpException(
+          { message: 'Validation failed', errors: error.errors },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+      throw error;
+    }
   }
 }
