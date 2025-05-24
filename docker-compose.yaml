@@ -1,4 +1,12 @@
 services:
+  builder:
+    image: node:24-alpine
+    working_dir: /app
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: ["npm", "run", "build"]
+
   rabbitmq:
     image: rabbitmq:3-management
     ports:
@@ -18,8 +26,8 @@ services:
 
   api-gateway:
     build:
-      context: ./packages/api-gateway
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: packages/api-gateway/Dockerfile
     ports:
       - "3000:3000"
     environment:
@@ -37,3 +45,107 @@ services:
 networks:
   api_network:
    driver: bridge
+
+# version: '3.8'
+
+# services:
+#   # Database
+#   postgres:
+#     image: postgres:15
+#     environment:
+#       POSTGRES_DB: recipe_scheduler
+#       POSTGRES_USER: postgres
+#       POSTGRES_PASSWORD: postgres
+#     ports:
+#       - "5432:5432"
+#     volumes:
+#       - postgres_data:/var/lib/postgresql/data
+
+#   # Redis for BullMQ
+#   redis:
+#     image: redis:7-alpine
+#     ports:
+#       - "6379:6379"
+#     volumes:
+#       - redis_data:/data
+
+#   # API Gateway Service
+#   api-gateway:
+#     build:
+#       context: ./services/api-gateway
+#       dockerfile: Dockerfile
+#     ports:
+#       - "3000:3000"
+#     environment:
+#       - NODE_ENV=development
+#       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/recipe_scheduler
+#       - REDIS_URL=redis://redis:6379
+#       - EVENT_SERVICE_URL=http://event-service:3001
+#       - NOTIFICATION_SERVICE_URL=http://notification-service:3002
+#     depends_on:
+#       - postgres
+#       - redis
+#       - event-service
+#       - notification-service
+#     volumes:
+#       - ./services/api-gateway:/app
+#       - /app/node_modules
+
+#   # Event Service
+#   event-service:
+#     build:
+#       context: ./services/event-service
+#       dockerfile: Dockerfile
+#     ports:
+#       - "3001:3001"
+#     environment:
+#       - NODE_ENV=development
+#       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/recipe_scheduler
+#       - REDIS_URL=redis://redis:6379
+#       - REMINDER_LEAD_MINUTES=15
+#     depends_on:
+#       - postgres
+#       - redis
+#     volumes:
+#       - ./services/event-service:/app
+#       - /app/node_modules
+
+#   # Notification Service
+#   notification-service:
+#     build:
+#       context: ./services/notification-service
+#       dockerfile: Dockerfile
+#     ports:
+#       - "3002:3002"
+#     environment:
+#       - NODE_ENV=development
+#       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/recipe_scheduler
+#       - REDIS_URL=redis://redis:6379
+#     depends_on:
+#       - postgres
+#       - redis
+#     volumes:
+#       - ./services/notification-service:/app
+#       - /app/node_modules
+
+#   # Worker Service
+#   worker-service:
+#     build:
+#       context: ./services/worker-service
+#       dockerfile: Dockerfile
+#     environment:
+#       - NODE_ENV=development
+#       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/recipe_scheduler
+#       - REDIS_URL=redis://redis:6379
+#       - EXPO_ACCESS_TOKEN=${EXPO_ACCESS_TOKEN}
+#     depends_on:
+#       - postgres
+#       - redis
+#       - notification-service
+#     volumes:
+#       - ./services/worker-service:/app
+#       - /app/node_modules
+
+# volumes:
+#   postgres_data:
+#   redis_data:
