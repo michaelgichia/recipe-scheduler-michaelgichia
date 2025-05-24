@@ -1,20 +1,20 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { ClientsModule, Transport } from '@nestjs/microservices';
+import { ConfigModule } from '@nestjs/config';
+import { BullModule } from '@nestjs/bullmq';
+import { UserModule } from './event/event.module';
 
 @Module({
   imports: [
-    ClientsModule.register([
-      {
-        name: 'EVENT_SERVICE',
-        transport: Transport.TCP,
-        options: {
-          host: process.env.EVENT_SERVICE_HOST || 'event-service',
-          port: parseInt(process.env.EVENT_SERVICE_PORT || '3001'),
-        },
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    BullModule.forRoot({
+      connection: {
+        host: process.env.REDIS_HOST || 'localhost',
+        port: parseInt(process.env.REDIS_PORT || '6379'),
       },
-    ]),
+    }),
+    UserModule,
   ],
-  controllers: [AppController],
 })
 export class AppModule {}

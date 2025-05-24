@@ -8,11 +8,7 @@ import {
 } from '@nestjs/common';
 
 import { ClientProxy } from '@nestjs/microservices';
-import {
-  CreateEventDto,
-  Event,
-  MESSAGE_PATTERNS,
-} from '@recipe-scheduler/shared';
+import { CreateEventDto, Event, MESSAGE_PATTERNS } from '@microservice/shared';
 import { firstValueFrom } from 'rxjs';
 
 @Controller('events')

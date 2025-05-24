@@ -1,6 +1,6 @@
 {
-  "name": "@michael-gichia/recipe-scheduler",
-  "version": "1.0.0",
+  "name": "@microservice/shared",
+  "version": "0.0.2",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ApiResponse, CreateEventDto } from '@recipe-scheduler/shared';
+import { ApiResponse, CreateEventDto } from '@microservice/shared';
 import { Event } from './entities/event.entity';
 
 @Injectable()

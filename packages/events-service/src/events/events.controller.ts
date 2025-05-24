@@ -6,7 +6,7 @@ import {
   MESSAGE_PATTERNS,
   ApiResponse,
   // GetEventsQuery,
-} from '@recipe-scheduler/shared';
+} from '@microservice/shared';
 import { EventsService } from './events.service';
 import { Event } from './entities/event.entity';
 
