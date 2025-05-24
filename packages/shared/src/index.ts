@@ -1,23 +1,10 @@
-export {
-  QUEUE_NAMES,
-  MESSAGE_PATTERNS,
-  Event,
-  Device,
-  ReminderJob,
-  ApiResponse,
-} from './types'
+export * from "./types/event.types";
+export * from "./types/device.types";
+export * from "./types/job.types";
 
-export {
-  CreateEventSchema,
-  UpdateEventSchema,
-  EventParamsSchema,
-  GetEventsQuerySchema,
-  CreateDeviceSchema,
-  PushNotificationSchema,
-  GetEventsQuery,
-  CreateEventDto,
-  UpdateEventDto,
-  EventParams,
-  CreateDeviceDto,
-  PushNotificationPayload,
-} from './validation'
+export * from "./dto/device.types";
+export * from "./dto/event.types";
+export * from "./dto/job.types";
+
+export * from "./constants/job-types";
+export * from "./constants/queues";

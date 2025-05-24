@@ -9,7 +9,7 @@ import {
 
 import { ClientProxy } from '@nestjs/microservices';
 import {
-  CreateEventSchema,
+  CreateEventDto,
   Event,
   MESSAGE_PATTERNS,
 } from '@recipe-scheduler/shared';
@@ -23,13 +23,13 @@ export class AppController {
   ) {}
 
   @Post()
-  async createEvent(@Body() createEventDto: any): Promise<Event> {
+  async createEvent(@Body() createEventDto: CreateEventDto): Promise<Event> {
     try {
       // Validate payload
-      const validatedData = CreateEventSchema.parse(createEventDto);
+      // const validatedData = CreateEventSchema.parse(createEventDto);
 
       const result = await firstValueFrom(
-        this.eventService.send(MESSAGE_PATTERNS.CREATE_EVENT, validatedData),
+        this.eventService.send(MESSAGE_PATTERNS.CREATE_EVENT, createEventDto),
       );
 
       if (!result.success) {

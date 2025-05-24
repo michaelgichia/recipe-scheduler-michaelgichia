@@ -14,7 +14,6 @@ import { Event } from './entities/event.entity';
 export class EventsController {
   constructor(private readonly eventsService: EventsService) {}
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   @MessagePattern(MESSAGE_PATTERNS.CREATE_EVENT)
   async createEvent(
     createEventDto: CreateEventDto,
