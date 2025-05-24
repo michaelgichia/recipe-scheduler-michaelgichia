@@ -17,7 +17,7 @@ export class Event {
   @Column({ type: 'varchar', length: 200 })
   title: string;
 
-  @Column({ name: 'event_time', type: 'timestamp with time zone' })
+  @Column({ name: 'event_time', type: 'datetime' })
   eventTime: Date;
 
   @CreateDateColumn({ name: 'created_at' })

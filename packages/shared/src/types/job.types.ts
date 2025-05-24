@@ -2,7 +2,7 @@ export interface ReminderJob {
   eventId: string;
   userId: string;
   title: string;
-  eventTime: Date;
+  eventTime: string;
   pushToken?: string;
 }
 

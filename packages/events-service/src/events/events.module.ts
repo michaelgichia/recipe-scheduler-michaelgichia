@@ -1,25 +1,21 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-// import { ClientsModule, Transport } from '@nestjs/microservices';
-import { EventsController } from './events.controller';
-import { EventsService } from './events.service';
+import { BullModule } from '@nestjs/bullmq';
+import { QUEUE_NAMES } from '@microservice/shared';
+
 import { Event } from './entities/event.entity';
+import { EventsService } from './events.service';
+import { EventController } from './events.controller';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Event]),
-    // ClientsModule.register([
-    //   {
-    //     name: 'WORKER_SERVICE',
-    //     transport: Transport.TCP,
-    //     options: {
-    //       host: process.env.WORKER_SERVICE_HOST || 'worker-service',
-    //       port: parseInt(process.env.WORKER_SERVICE_PORT || '3003'),
-    //     },
-    //   },
-    // ]),
+    BullModule.registerQueue({
+      name: QUEUE_NAMES.EVENT_QUEUE,
+    }),
   ],
-  controllers: [EventsController],
+  controllers: [EventController],
   providers: [EventsService],
+  exports: [EventsService],
 })
 export class EventsModule {}

@@ -11,7 +11,7 @@ import { EventsService } from './events.service';
 import { Event } from './entities/event.entity';
 
 @Controller()
-export class EventsController {
+export class EventController {
   constructor(private readonly eventsService: EventsService) {}
 
   @MessagePattern(MESSAGE_PATTERNS.CREATE_EVENT)
