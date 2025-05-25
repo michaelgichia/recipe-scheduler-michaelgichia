@@ -1,46 +1,12 @@
-import {
-  Controller,
-  Post,
-  Body,
-  Inject,
-  HttpException,
-  HttpStatus,
-} from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
+import { AppService } from './app.service';
 
-import { ClientProxy } from '@nestjs/microservices';
-import { CreateEventDto, Event, MESSAGE_PATTERNS } from '@microservice/shared';
-import { firstValueFrom } from 'rxjs';
-
-@Controller('events')
+@Controller()
 export class AppController {
-  constructor(
-    @Inject('EVENT_SERVICE')
-    private readonly eventService: ClientProxy,
-  ) {}
+  constructor(private readonly appService: AppService) {}
 
-  @Post()
-  async createEvent(@Body() createEventDto: CreateEventDto): Promise<Event> {
-    try {
-      // Validate payload
-      // const validatedData = CreateEventSchema.parse(createEventDto);
-
-      const result = await firstValueFrom(
-        this.eventService.send(MESSAGE_PATTERNS.CREATE_EVENT, createEventDto),
-      );
-
-      if (!result.success) {
-        throw new HttpException(result.error, HttpStatus.BAD_REQUEST);
-      }
-
-      return result.data;
-    } catch (error) {
-      if (error.name === 'ZodError') {
-        throw new HttpException(
-          { message: 'Validation failed', errors: error.errors },
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-      throw error;
-    }
+  @Get()
+  getHello(): string {
+    return this.appService.getHello();
   }
 }

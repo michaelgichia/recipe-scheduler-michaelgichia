@@ -5,6 +5,7 @@ import {
   // UpdateEventDto,
   MESSAGE_PATTERNS,
   ApiResponse,
+  GetEventsQuery,
   // GetEventsQuery,
 } from '@microservice/shared';
 import { EventsService } from './events.service';
@@ -19,6 +20,11 @@ export class EventController {
     createEventDto: CreateEventDto,
   ): Promise<ApiResponse<Event>> {
     return await this.eventsService.create(createEventDto);
+  }
+
+  @MessagePattern(MESSAGE_PATTERNS.GET_EVENTS)
+  async getEvents(query: GetEventsQuery): Promise<ApiResponse<Event[]>> {
+    return await this.eventsService.findAll(query);
   }
 }
 

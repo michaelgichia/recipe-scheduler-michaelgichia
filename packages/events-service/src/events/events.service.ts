@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { ApiResponse, CreateEventDto } from '@microservice/shared';
+import { MoreThan, Repository } from 'typeorm';
+import {
+  ApiResponse,
+  CreateEventDto,
+  GetEventsQuery,
+} from '@microservice/shared';
 import { Event } from './entities/event.entity';
 
 @Injectable()
@@ -33,33 +37,32 @@ export class EventsService {
     }
   }
 
-  // async findAll(query: GetEventsQuery): Promise<ApiResponse<Event[]>> {
-  //   try {
-  //     const { userId, limit = 50, offset = 0 } = query;
+  async findAll(query: GetEventsQuery): Promise<ApiResponse<Event[]>> {
+    try {
+      const { userId, limit = 50, offset = 0 } = query;
+      const events = await this.eventsRepository.find({
+        where: {
+          userId,
+          eventTime: MoreThan(new Date()), // Only upcoming events
+        },
+        order: {
+          eventTime: 'ASC', // Soonest first
+        },
+        take: Number(limit),
+        skip: Number(offset),
+      });
 
-  //     const events = await this.eventsRepository.find({
-  //       where: {
-  //         userId,
-  //         eventTime: MoreThan(new Date()), // Only upcoming events
-  //       },
-  //       order: {
-  //         eventTime: 'ASC', // Soonest first
-  //       },
-  //       take: limit,
-  //       skip: offset,
-  //     });
-
-  //     return {
-  //       success: true,
-  //       data: events,
-  //     };
-  //   } catch (error) {
-  //     return {
-  //       success: false,
-  //       error: error.message,
-  //     };
-  //   }
-  // }
+      return {
+        success: true,
+        data: events,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message,
+      };
+    }
+  }
 
   // async findOne(id: string): Promise<ApiResponse<Event>> {
   //   try {

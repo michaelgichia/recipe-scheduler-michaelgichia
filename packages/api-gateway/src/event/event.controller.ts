@@ -1,20 +1,18 @@
 import {
   Controller,
-  // Get,
   Post,
-  // Patch,
-  // Delete,
   Body,
-  // Param,
-  // Query,
   Inject,
   HttpException,
   HttpStatus,
+  Query,
+  Get,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import {
   Event,
+  GetEventsQuery,
   MESSAGE_PATTERNS,
   // CreateEventDto,
   // UpdateEventSchema,
@@ -34,6 +32,24 @@ export class EventController {
 
     if (!result.success) {
       throw new HttpException(result.error, HttpStatus.BAD_REQUEST);
+    }
+
+    return result.data;
+  }
+
+  @Get()
+  async getEvents(@Query() query: GetEventsQuery): Promise<Event[]> {
+    console.log("query", query)
+    const result = await firstValueFrom(
+      this.eventService.send<{
+        success: boolean;
+        error?: string;
+        data: Event[];
+      }>(MESSAGE_PATTERNS.GET_EVENTS, query),
+    );
+
+    if (!result.success) {
+      throw new HttpException(result, HttpStatus.BAD_REQUEST);
     }
 
     return result.data;
