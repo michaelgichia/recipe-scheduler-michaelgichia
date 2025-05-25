@@ -1,14 +1,6 @@
-import {
-  Body,
-  Get,
-  Injectable,
-  Logger,
-  NotFoundException,
-  Param,
-  Patch,
-} from '@nestjs/common';
+import { Body, Get, Injectable, Param, Patch } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DeleteResult, MoreThan, UpdateResult } from 'typeorm';
+import { Repository, MoreThan } from 'typeorm';
 import {
   Event,
   CreateEventDto,
@@ -19,8 +11,6 @@ import {
 
 @Injectable()
 export class EventsService {
-  private readonly logger = new Logger(EventsService.name);
-
   constructor(
     @InjectRepository(Event)
     private eventsRepository: Repository<Event>,

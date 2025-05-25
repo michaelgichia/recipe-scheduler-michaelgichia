@@ -19,7 +19,6 @@ import {
   GetEventsQuery,
   MESSAGE_PATTERNS,
   UpdateEventDto,
-  EventParams,
 } from '@microservice/shared';
 @Controller('events')
 export class EventController {

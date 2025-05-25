@@ -9,7 +9,6 @@ import {
   UpdateEventDto,
 } from '@microservice/shared';
 import { EventsService } from './events.service';
-import { DeleteResult } from 'typeorm';
 
 @Controller()
 export class EventProcessor {

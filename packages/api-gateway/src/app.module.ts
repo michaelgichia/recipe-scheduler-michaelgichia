@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { EventController } from './event/event.controller';
+import { DeviceController } from './device/device.controller';
 
 @Module({
   imports: [
@@ -15,6 +16,6 @@ import { EventController } from './event/event.controller';
       },
     ]),
   ],
-  controllers: [EventController],
+  controllers: [EventController, DeviceController],
 })
 export class AppModule {}

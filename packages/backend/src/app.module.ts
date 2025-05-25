@@ -4,7 +4,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { BullModule } from '@nestjs/bullmq';
 
 import { EventsModule } from './events/events.module';
+import { DevicesModule } from './devices/devices.module';
 import { Event } from './events/entities/event.entity';
+import { Device } from './devices/entities/device.entity';
 
 @Module({
   imports: [
@@ -14,7 +16,7 @@ import { Event } from './events/entities/event.entity';
     TypeOrmModule.forRoot({
       type: 'sqlite',
       database: process.env.DATABASE_URL || './data/database.sqlite',
-      entities: [Event],
+      entities: [Event, Device],
       synchronize: process.env.NODE_ENV === 'development',
       logging: process.env.NODE_ENV === 'development',
     }),
@@ -25,6 +27,7 @@ import { Event } from './events/entities/event.entity';
       },
     }),
     EventsModule,
+    DevicesModule,
   ],
 })
 export class AppModule {}
