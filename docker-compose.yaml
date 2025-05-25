@@ -23,7 +23,7 @@ services:
       - NODE_ENV=development
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - EVENT_SERVICE_HOST=events-service
+      - EVENT_SERVICE_HOST=backend
       - EVENT_SERVICE_PORT=3001
     depends_on:
       redis:
@@ -36,11 +36,11 @@ services:
       - /app/packages/shared/node_modules
     command: npm run start:dev
 
-  events-service:
+  backend:
     build:
       context: .
-      dockerfile: packages/events-service/Dockerfile
-    container_name: microservice-events-service
+      dockerfile: packages/backend/Dockerfile
+    container_name: microservice-backend
     ports:
       - "3001:3001"
     environment:
@@ -52,12 +52,12 @@ services:
       redis:
         condition: service_healthy
     volumes:
-      - ./packages/events-service:/app/packages/events-service
+      - ./packages/backend:/app/packages/backend
       - ./packages/shared:/app/packages/shared
       - /app/node_modules
-      - /app/packages/events-service/node_modules
+      - /app/packages/backend/node_modules
       - /app/packages/shared/node_modules
-      - subscriber_data:/app/packages/events-service/data
+      - subscriber_data:/app/packages/backend/data
     command: npm run start:dev
 
 volumes:

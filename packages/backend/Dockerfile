@@ -9,8 +9,8 @@ COPY package*.json ./
 # Copy shared package
 COPY packages/shared ./packages/shared
 
-# Copy events-service package
-COPY packages/events-service ./packages/events-service
+# Copy backend package
+COPY packages/backend ./packages/backend
 
 # Install dependencies
 RUN npm install
@@ -19,12 +19,12 @@ RUN npm install
 WORKDIR /app/packages/shared
 RUN npm run build
 
-# Build events-service
-WORKDIR /app/packages/events-service
+# Build backend
+WORKDIR /app/packages/backend
 RUN npm run build
 
 # Create data directory for SQLite
-RUN mkdir -p /app/packages/events-service/data
+RUN mkdir -p /app/packages/backend/data
 
 EXPOSE 3001
 

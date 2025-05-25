@@ -25,10 +25,14 @@ export class EventService {
       requestId,
     };
 
-    const job = await this.eventQueue.add(MESSAGE_PATTERNS.CREATE_EVENT, jobPayload, {
-      removeOnComplete: 10,
-      removeOnFail: 10,
-    });
+    const job = await this.eventQueue.add(
+      MESSAGE_PATTERNS.CREATE_EVENT,
+      jobPayload,
+      {
+        removeOnComplete: 10,
+        removeOnFail: 10,
+      },
+    );
 
     return {
       message: 'Event creation job queued successfully',
@@ -46,10 +50,14 @@ export class EventService {
       requestId,
     };
 
-    const job = await this.eventQueue.add(MESSAGE_PATTERNS.GET_EVENT, jobPayload, {
-      removeOnComplete: 10,
-      removeOnFail: 10,
-    });
+    const job = await this.eventQueue.add(
+      MESSAGE_PATTERNS.GET_EVENT,
+      jobPayload,
+      {
+        removeOnComplete: 10,
+        removeOnFail: 10,
+      },
+    );
 
     return {
       message: 'Get events job queued successfully',

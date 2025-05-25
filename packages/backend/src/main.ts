@@ -1,5 +1,6 @@
-import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import { NestFactory } from '@nestjs/core';
+
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -15,10 +16,9 @@ async function bootstrap() {
   );
 
   await app.listen();
-  console.log('🎯 Event Service microservice is listening on port 3001');
 }
 
 bootstrap().catch((error) => {
-  console.error('Failed to start Event Service:', error);
+  console.error('Failed to start Backend Service:', error);
   process.exit(1);
 });
