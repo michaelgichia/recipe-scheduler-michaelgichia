@@ -1,6 +1,7 @@
 import { Controller } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
 import {
+  ApiResponse,
   CreateEventDto,
   Event,
   GetEventsQuery,
@@ -15,30 +16,32 @@ export class EventProcessor {
   constructor(private readonly eventsService: EventsService) {}
 
   @MessagePattern(MESSAGE_PATTERNS.CREATE_EVENT)
-  async createEvent(createEventDto: CreateEventDto): Promise<Event> {
-    return await this.eventsService.create(createEventDto);
+  async createEvent(
+    createEventDto: CreateEventDto,
+  ): Promise<ApiResponse<Event>> {
+    return this.eventsService.create(createEventDto);
   }
 
   @MessagePattern(MESSAGE_PATTERNS.GET_EVENTS)
-  async getEvents(query: GetEventsQuery): Promise<Event[]> {
-    return await this.eventsService.findAll(query.userId);
+  async getEvents(query: GetEventsQuery): Promise<ApiResponse<Event[]>> {
+    return this.eventsService.findAll(query);
   }
 
   @MessagePattern(MESSAGE_PATTERNS.GET_EVENT)
-  async getEvent(id: string): Promise<Event | null> {
-    return await this.eventsService.findOne(id);
+  async getEvent(id: string): Promise<ApiResponse<Event | null>> {
+    return this.eventsService.findOne(id);
   }
 
   @MessagePattern(MESSAGE_PATTERNS.UPDATE_EVENT)
   async updateEvent(
     payload: { id: string } & UpdateEventDto,
-  ): Promise<Event | undefined> {
+  ): Promise<ApiResponse<Event>> {
     const { id, ...updateEventDto } = payload;
-    return await this.eventsService.update(id, updateEventDto);
+    return this.eventsService.update(id, updateEventDto);
   }
 
   @MessagePattern(MESSAGE_PATTERNS.DELETE_EVENT)
-  async deleteEvent(id: string): Promise<DeleteResult> {
-    return await this.eventsService.remove(id);
+  async deleteEvent(id: string): Promise<ApiResponse<null>> {
+    return this.eventsService.remove(id);
   }
 }

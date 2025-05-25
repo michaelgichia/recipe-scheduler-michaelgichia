@@ -1,7 +1,21 @@
-import { Injectable, Logger } from '@nestjs/common';
+import {
+  Body,
+  Get,
+  Injectable,
+  Logger,
+  NotFoundException,
+  Param,
+  Patch,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DeleteResult } from 'typeorm';
-import { Event, CreateEventDto, UpdateEventDto } from '@microservice/shared';
+import { Repository, DeleteResult, MoreThan, UpdateResult } from 'typeorm';
+import {
+  Event,
+  CreateEventDto,
+  UpdateEventDto,
+  ApiResponse,
+  GetEventsQuery,
+} from '@microservice/shared';
 
 @Injectable()
 export class EventsService {
@@ -12,55 +26,121 @@ export class EventsService {
     private eventsRepository: Repository<Event>,
   ) {}
 
-  async create(createEventDto: CreateEventDto): Promise<Event> {
-    const newEvent = this.eventsRepository.create({
-      ...createEventDto,
-      eventTime: new Date(createEventDto.eventTime), // Convert string to Date
-    });
-    return this.eventsRepository.save(newEvent);
-  }
-
-  async findAll(userId: string): Promise<Event[]> {
-    this.logger.debug(`Querying events for userId: ${userId}`);
+  async create(createEventDto: CreateEventDto): Promise<ApiResponse<Event>> {
     try {
-      const events = await this.eventsRepository.find({
-        where: { userId },
-        order: { eventTime: 'ASC' },
+      const event = this.eventsRepository.create({
+        ...createEventDto,
+        eventTime: new Date(createEventDto.eventTime),
       });
-      this.logger.debug(`Found ${events.length} events in database`);
-      return events;
+
+      const savedEvent = await this.eventsRepository.save(event);
+
+      return {
+        success: true,
+        data: savedEvent,
+      };
     } catch (error: unknown) {
-      const errorMessage =
-        error instanceof Error ? error.message : 'Unknown error';
-      const errorStack = error instanceof Error ? error.stack : undefined;
-      this.logger.error(`Error finding events: ${errorMessage}`, errorStack);
-      throw error;
+      return {
+        success: false,
+        error:
+          error instanceof Error ? error.message : 'An unknown error occurred',
+      };
     }
   }
 
-  async findOne(id: string): Promise<Event | null> {
-    return this.eventsRepository.findOne({ where: { id } });
+  async findAll(query: GetEventsQuery): Promise<ApiResponse<Event[]>> {
+    try {
+      const { userId, limit = 50, offset = 0 } = query;
+      const events = await this.eventsRepository.find({
+        where: {
+          userId,
+          eventTime: MoreThan(new Date()),
+        },
+        order: {
+          eventTime: 'ASC',
+        },
+        take: Number(limit),
+        skip: Number(offset),
+      });
+
+      return {
+        success: true,
+        data: events,
+      };
+    } catch (error: unknown) {
+      return {
+        success: false,
+        error:
+          error instanceof Error ? error.message : 'Something wrong happened',
+      };
+    }
   }
 
+  @Get(':id')
+  async findOne(@Param('id') id: string): Promise<ApiResponse<Event>> {
+    try {
+      const event = await this.eventsRepository.findOne({ where: { id } });
+      if (!event) {
+        return {
+          success: false,
+          error: `Event with ID "${id}" not found`,
+        };
+      }
+      return {
+        success: true,
+        data: event,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error:
+          error instanceof Error ? error.message : 'Something wrong happened',
+      };
+    }
+  }
+
+  @Patch(':id')
   async update(
-    id: string,
-    updateEventDto: UpdateEventDto,
-  ): Promise<Event | undefined> {
-    const event = await this.eventsRepository.preload({
-      id: id,
-      ...updateEventDto,
-      eventTime: updateEventDto.eventTime
-        ? new Date(updateEventDto.eventTime)
-        : undefined,
-    });
+    @Param('id') id: string,
+    @Body() updateEventDto: UpdateEventDto,
+  ): Promise<ApiResponse<Event>> {
+    try {
+      await this.eventsRepository.update(id, updateEventDto);
+      const event = await this.eventsRepository.findOne({ where: { id } });
 
-    if (!event) {
-      return undefined; // Event not found
+      if (!event) {
+        return {
+          success: false,
+          error: `Event with ID "${id}" not found`,
+        };
+      }
+
+      return {
+        success: true,
+        data: event,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error:
+          error instanceof Error ? error.message : 'Something wrong happened',
+      };
     }
-    return this.eventsRepository.save(event);
   }
 
-  async remove(id: string): Promise<DeleteResult> {
-    return this.eventsRepository.delete(id);
+  async remove(id: string): Promise<ApiResponse<null>> {
+    try {
+      await this.eventsRepository.delete(id);
+      return {
+        success: true,
+        data: null,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error:
+          error instanceof Error ? error.message : 'Something wrong happened',
+      };
+    }
   }
 }

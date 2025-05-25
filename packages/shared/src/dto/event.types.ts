@@ -7,7 +7,9 @@ import {
   IsISO8601,
   ValidateIf,
   IsNumberString,
+  IsDate,
 } from "class-validator";
+import { Type } from "class-transformer";
 
 // Event DTOs
 
@@ -18,11 +20,24 @@ export class CreateEventDto {
   title!: string;
 
   @IsString()
+  @IsNotEmpty({ message: "User ID is required" })
+  @IsUUID("4", { message: "Invalid user ID format" })
+  userId!: string;
+
+  @IsString()
+  @IsNotEmpty({ message: "Event time is required" })
   @IsISO8601({}, { message: "Invalid datetime format" })
   eventTime!: string;
 
-  @IsUUID("4", { message: "Invalid user ID format" })
-  userId!: string;
+  @IsOptional()
+  @IsDate()
+  @Type(() => Date)
+  createdAt?: Date;
+
+  @IsOptional()
+  @IsDate()
+  @Type(() => Date)
+  updatedAt?: Date;
 }
 
 export class UpdateEventDto {

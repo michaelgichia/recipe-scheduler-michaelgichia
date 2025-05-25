@@ -66,7 +66,7 @@ export class EventController {
   }
 
   @Get(':id')
-  async getEvent(@Param('id') id: EventParams): Promise<Event> {
+  async getEvent(@Param('id') id: string): Promise<Event> {
     const result = await firstValueFrom(
       this.eventService.send<{
         success: boolean;
@@ -89,7 +89,7 @@ export class EventController {
 
   @Patch(':id')
   async updateEvent(
-    @Param('id') id: EventParams,
+    @Param('id') id: string,
     @Body() updateEventDto: UpdateEventDto,
   ): Promise<Event> {
     const result = await firstValueFrom(
@@ -116,7 +116,7 @@ export class EventController {
   }
 
   @Delete(':id')
-  async deleteEvent(@Param('id') id: EventParams): Promise<void> {
+  async deleteEvent(@Param('id') id: string): Promise<void> {
     const result = await firstValueFrom(
       this.eventService.send<{
         success: boolean;
