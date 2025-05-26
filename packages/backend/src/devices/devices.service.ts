@@ -49,4 +49,28 @@ export class DevicesService {
       };
     }
   }
+
+  async findPushTokensByUserId(userId: string): Promise<ApiResponse<Device>> {
+    try {
+      const device = await this.devicesRepository.findOne({
+        where: { userId },
+      });
+      if (!device) {
+        return {
+          success: false,
+          error: `Device with User ID "${userId}" not found`,
+        };
+      }
+      return {
+        success: true,
+        data: device,
+      };
+    } catch (error: unknown) {
+      return {
+        success: false,
+        error:
+          error instanceof Error ? error.message : 'Something wrong happened',
+      };
+    }
+  }
 }

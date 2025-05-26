@@ -10,6 +10,7 @@ export const MESSAGE_PATTERNS = {
   // Notification Service
   CREATE_DEVICE: "device.create",
   GET_DEVICE: "device.get",
+  GET_DEVICE_BY_USER_ID: "device.get_by_user_id",
   SEND_PUSH: "notification.send_push",
 
   // Worker Service

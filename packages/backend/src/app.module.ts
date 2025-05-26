@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BullModule } from '@nestjs/bullmq';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 
 import { EventsModule } from './events/events.module';
 import { DevicesModule } from './devices/devices.module';
@@ -26,6 +27,24 @@ import { Device } from './devices/entities/device.entity';
         port: parseInt(process.env.REDIS_PORT || '6379'),
       },
     }),
+    ClientsModule.registerAsync([
+      {
+        name: 'REMINDER_SERVICE',
+        imports: [ConfigModule],
+        inject: [ConfigService],
+        useFactory: (configService: ConfigService) => ({
+          transport: Transport.TCP,
+          options: {
+            host:
+              configService.get<string>('REMINDER_SERVICE_HOST') || 'localhost',
+            port: parseInt(
+              configService.get<string>('REMINDER_SERVICE_PORT') || '3003',
+              10,
+            ),
+          },
+        }),
+      },
+    ]),
     EventsModule,
     DevicesModule,
   ],

@@ -24,4 +24,11 @@ export class DevicesProcessor {
   async getDevice(id: string): Promise<ApiResponse<Device | null>> {
     return this.devicesService.findOne(id);
   }
+
+  @MessagePattern(MESSAGE_PATTERNS.GET_DEVICE_BY_USER_ID)
+  async findPushTokensByUserId(
+    userId: string,
+  ): Promise<ApiResponse<Device | null>> {
+    return this.devicesService.findPushTokensByUserId(userId);
+  }
 }
