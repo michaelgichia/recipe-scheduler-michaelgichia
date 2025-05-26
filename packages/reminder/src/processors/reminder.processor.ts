@@ -20,6 +20,8 @@ export class ReminderProcessor extends WorkerHost {
   }
 
   async process(job: Job<ReminderJob>) {
+    this.logger.log('Processing reminder job...', JSON.stringify(job));
+
     const { eventId, userId, title, eventTime, pushToken } = job.data;
 
     this.logger.log(`Processing reminder for event ${eventId}`);
