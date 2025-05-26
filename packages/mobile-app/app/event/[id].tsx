@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   buttonText: {
-    color: '#FFFFFF',
+    color: '#000',
     fontSize: 16,
     fontWeight: '600',
   },

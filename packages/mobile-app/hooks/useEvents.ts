@@ -1,80 +1,95 @@
-import { useState, useEffect } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Event, CreateEventRequest } from '@microservice/shared';
+import {useState, useEffect} from 'react'
+import axios from 'axios'
+import {Event} from '@microservice/shared'
 
-const EVENTS_STORAGE_KEY = '@events';
+const API_URL = 'http://localhost:3000/api'
+const USER_ID = '69911546-638e-4c25-915c-c9135b3df17c'
 
 export const useEvents = () => {
-  const [events, setEvents] = useState<Event[]>([]);
+  const [events, setEvents] = useState<Event[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  const fetchEvents = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      const response = await axios.get<Event[]>(`${API_URL}/events`, {
+        params: {userId: USER_ID},
+      })
+      setEvents(response.data)
+    } catch (err) {
+      setError('Failed to fetch events')
+      console.error('Error fetching events:', err)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   useEffect(() => {
-    loadEvents();
-  }, []);
+    fetchEvents()
+  }, [])
 
-  const loadEvents = async () => {
+  const addEvent = async (eventData: {title: string; eventTime: Date}) => {
     try {
-      const savedEvents = await AsyncStorage.getItem(EVENTS_STORAGE_KEY);
-      if (savedEvents) {
-        const parsedEvents = JSON.parse(savedEvents).map((event: any) => ({
-          ...event,
-          eventTime: new Date(event.eventTime),
-          createdAt: new Date(event.createdAt),
-          updatedAt: new Date(event.updatedAt),
-        }));
-        setEvents(parsedEvents);
-      }
-    } catch (error) {
-      console.error('Error loading events:', error);
-    }
-  };
+      setError(null)
+      const response = await axios.post<Event>(`${API_URL}/events`, {
+        title: eventData.title,
+        eventTime: eventData.eventTime.toISOString(),
+        userId: USER_ID,
+      })
 
-  const saveEvents = async (updatedEvents: Event[]) => {
+      setEvents((prev) =>
+        [...prev, response.data].sort(
+          (a, b) => (new Date(a.eventTime)).getTime() - (new Date(b.eventTime)).getTime(),
+        ),
+      )
+    } catch (err) {
+      setError('Failed to create event')
+      console.error('Error creating event:', err)
+    }
+  }
+
+  const updateEvent = async (
+    id: string,
+    updates: {title?: string; eventTime?: Date},
+  ) => {
     try {
-      await AsyncStorage.setItem(EVENTS_STORAGE_KEY, JSON.stringify(updatedEvents));
-      setEvents(updatedEvents);
-    } catch (error) {
-      console.error('Error saving events:', error);
+      setError(null)
+      const response = await axios.patch<Event>(`${API_URL}/events/${id}`, {
+        ...updates,
+        eventTime:
+          updates.eventTime instanceof Date
+            ? updates.eventTime?.toISOString()
+            : updates.eventTime,
+      })
+      setEvents((prev) =>
+        prev.map((event) => (event.id === id ? response.data : event)),
+      )
+    } catch (err) {
+      setError('Failed to update event')
+      console.error('Error updating event:', err)
     }
-  };
-
-  const addEvent = async (eventData: { title: string; eventTime: Date }) => {
-    const now = new Date();
-    const newEvent: Event = {
-      id: Date.now().toString(),
-      userId: '1', // TODO: Replace with actual user ID when auth is implemented
-      title: eventData.title,
-      eventTime: eventData.eventTime,
-      createdAt: now,
-      updatedAt: now,
-    };
-    const updatedEvents = [...events, newEvent].sort(
-      (a, b) => a.eventTime.getTime() - b.eventTime.getTime()
-    );
-    await saveEvents(updatedEvents);
-  };
-
-  const updateEvent = async (id: string, updates: { title?: string; eventTime?: Date }) => {
-    const updatedEvents = events.map(event =>
-      event.id === id
-        ? {
-            ...event,
-            ...updates,
-            updatedAt: new Date(),
-          }
-        : event
-    );
-    await saveEvents(updatedEvents);
-  };
+  }
 
   const deleteEvent = async (id: string) => {
-    const updatedEvents = events.filter(event => event.id !== id);
-    await saveEvents(updatedEvents);
-  };
+    try {
+      setError(null)
+      await axios.delete(`${API_URL}/events/${id}`)
+      setEvents((prev) => prev.filter((event) => event.id !== id))
+    } catch (err) {
+      setError('Failed to delete event')
+      console.error('Error deleting event:', err)
+    }
+  }
 
   return {
     events,
+    loading,
+    error,
     addEvent,
     updateEvent,
     deleteEvent,
-  };
-};
+    refetch: fetchEvents,
+  }
+}

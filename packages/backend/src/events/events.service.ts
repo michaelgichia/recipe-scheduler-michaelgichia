@@ -39,28 +39,30 @@ export class EventsService {
       };
 
       console.log(
-        `Scheduling reminder for event ID ${savedEvent.id} at ${scheduleReminderDto.eventTime} with ${scheduleReminderDto.minutesBefore} minutes before`
+        `Scheduling reminder for event ID ${savedEvent.id} at ${scheduleReminderDto.eventTime} with ${scheduleReminderDto.minutesBefore} minutes before`,
       );
       try {
         // Send message to the reminder service.
         // We use .emit() because the backend doesn't need a direct response about the scheduling,
         // just that the request was sent. The actual scheduling is asynchronous in the reminder service.
         // If you needed to know if the scheduling request was acknowledged, use .send()
-        this.reminderServiceClient.emit(MESSAGE_PATTERNS.SCHEDULE_REMINDER, scheduleReminderDto).subscribe({
-          next: () => {
-            // Optional: Log successful emission if desired
-            // console.log(`Successfully emitted SCHEDULE_REMINDER for event ID ${savedEvent.id}`);
-          },
-          error: (emitError) => {
-            // Log the error for observability
-            console.error(
-              `Failed to emit SCHEDULE_REMINDER for event ID ${savedEvent.id}:`,
-              emitError,
-            );
-            // Decide how to handle this: metrics, or potentially re-queue locally for retry
-            // As per your comment, event creation succeeds even if reminder scheduling fails to initiate.
-          },
-        });
+        this.reminderServiceClient
+          .emit(MESSAGE_PATTERNS.SCHEDULE_REMINDER, scheduleReminderDto)
+          .subscribe({
+            next: () => {
+              // Optional: Log successful emission if desired
+              // console.log(`Successfully emitted SCHEDULE_REMINDER for event ID ${savedEvent.id}`);
+            },
+            error: (emitError) => {
+              // Log the error for observability
+              console.error(
+                `Failed to emit SCHEDULE_REMINDER for event ID ${savedEvent.id}:`,
+                emitError,
+              );
+              // Decide how to handle this: metrics, or potentially re-queue locally for retry
+              // As per your comment, event creation succeeds even if reminder scheduling fails to initiate.
+            },
+          });
       } catch (dbError: unknown) {
         // This catch block is for synchronous errors during the emit setup,
         // or errors from .subscribe() itself if it were to throw synchronously (unlikely for emit).
