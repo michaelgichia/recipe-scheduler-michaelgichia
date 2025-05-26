@@ -45,6 +45,8 @@ export const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
           display={Platform.OS === 'ios' ? 'spinner' : 'default'}
           onChange={handleChange}
           minimumDate={new Date()}
+          // minimumDate={new Date((new Date()).getDate() + 1)}
+
         />
       )}
     </View>

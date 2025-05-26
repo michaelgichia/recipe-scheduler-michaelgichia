@@ -22,6 +22,16 @@ async function bootstrap() {
     }),
   );
 
+  app.enableCors({
+    origin: [
+      'http://localhost:19006',
+      'http://192.168.x.x:19006',
+      'http://localhost:8081',
+    ],
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+  });
+
   app.setGlobalPrefix('api');
 
   const port = process.env.PORT || 3000;

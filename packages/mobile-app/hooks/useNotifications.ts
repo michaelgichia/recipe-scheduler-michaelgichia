@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as Notifications from 'expo-notifications';
+// import * as Notifications from 'expo-notifications';
 import { Notification } from '../constants/types';
 
 const NOTIFICATIONS_STORAGE_KEY = '@notifications';
@@ -34,35 +34,35 @@ export const useNotifications = () => {
   };
 
   const setupNotifications = async () => {
-    const { status } = await Notifications.requestPermissionsAsync();
-    if (status !== 'granted') {
-      console.log('Notification permissions not granted');
-      return;
-    }
+    // const { status } = await Notifications.requestPermissionsAsync();
+    // if (status !== 'granted') {
+    //   console.log('Notification permissions not granted');
+    //   return;
+    // }
 
-    Notifications.setNotificationHandler({
-      handleNotification: async () => ({
-        shouldShowAlert: true,
-        shouldPlaySound: true,
-        shouldSetBadge: true,
-        shouldShowBanner: true,
-        shouldShowList: true,
-      }),
-    });
+    // Notifications.setNotificationHandler({
+    //   handleNotification: async () => ({
+    //     shouldShowAlert: true,
+    //     shouldPlaySound: true,
+    //     shouldSetBadge: true,
+    //     shouldShowBanner: true,
+    //     shouldShowList: true,
+    //   }),
+    // });
 
-    const subscription = Notifications.addNotificationReceivedListener(notification => {
-      const newNotification: Notification = {
-        id: notification.request.identifier || Date.now().toString(),
-        title: notification.request.content.title,
-        body: notification.request.content.body || '',
-        date: new Date().toISOString(),
-        read: false,
-      };
-      setNotifications(prev => [newNotification, ...prev]);
-    });
+    // const subscription = Notifications.addNotificationReceivedListener(notification => {
+    //   const newNotification: Notification = {
+    //     id: notification.request.identifier || Date.now().toString(),
+    //     title: notification.request.content.title,
+    //     body: notification.request.content.body || '',
+    //     date: new Date().toISOString(),
+    //     read: false,
+    //   };
+      // setNotifications(prev => [newNotification, ...prev]);
+    // });
 
     return () => {
-      subscription.remove();
+      // subscription.remove();
     };
   };
 
