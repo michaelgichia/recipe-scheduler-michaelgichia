@@ -26,7 +26,7 @@ import { Event } from './entities/event.entity';
             host:
               configService.get<string>('REMINDER_SERVICE_HOST') || 'localhost',
             port: parseInt(
-              configService.get<string>('REMINDER_SERVICE_PORT') || '3003',
+              configService.get<string>('REMINDER_SERVICE_PORT') || '3005',
               10,
             ),
           },
