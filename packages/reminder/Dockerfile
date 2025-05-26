@@ -26,6 +26,6 @@ RUN npm run build
 # Create data directory for SQLite
 RUN mkdir -p /app/packages/reminder/data
 
-EXPOSE 3003
+EXPOSE 3005
 
 CMD ["npm", "run", "start:prod"]

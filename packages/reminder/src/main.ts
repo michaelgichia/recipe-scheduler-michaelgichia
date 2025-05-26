@@ -10,7 +10,7 @@ async function bootstrap() {
       transport: Transport.TCP,
       options: {
         host: '0.0.0.0',
-        port: 3003,
+        port: 3005,
       },
     },
   );
@@ -18,7 +18,7 @@ async function bootstrap() {
   await app.listen();
 
   console.log('🔨 Worker Service started');
-  console.log('📡 Microservice listening on port 3003');
+  console.log('📡 Microservice listening on port 3005');
   console.log('⚡ BullMQ workers are processing jobs...');
 }
 
