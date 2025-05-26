@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 import { QUEUE_NAMES, ReminderJob } from '@microservice/shared';
+import { subMinutes, parseISO } from 'date-fns';
 
 @Injectable()
 export class QueueService {
@@ -11,28 +12,34 @@ export class QueueService {
   ) {}
 
   async scheduleReminder(job: ReminderJob): Promise<void> {
+    console.log('Job', JSON.stringify(job));
     const leadMinutes = parseInt(process.env.REMINDER_LEAD_MINUTES || '0');
-    const eventTime = new Date(job.eventTime);
 
-    // For testing: Use current time + 1 minute if event is in the future
+    // Parse the event time using date-fns
+    const eventTime = parseISO(job.eventTime);
     const now = new Date();
-    const reminderTime =
-      eventTime > now
-        ? new Date(now.getTime() + 60000) // 1 minute from now
-        : new Date(eventTime.getTime() - leadMinutes * 60 * 1000);
 
-    const delay = reminderTime.getTime() - Date.now();
+    // Log the times for debugging
+    console.log('Event time (UTC):', eventTime.toISOString());
+    console.log('Current time (UTC):', now.toISOString());
+
+    // Calculate reminder time using date-fns
+    const reminderTime = subMinutes(eventTime, leadMinutes);
+    console.log('Reminder time (UTC):', reminderTime.toISOString());
+
+    const delay = reminderTime.getTime() - now.getTime();
+    console.log('Delay in minutes:', Math.floor(delay / (60 * 1000)));
 
     if (delay > 0) {
       await this.reminderQueue.add('send-reminder', job, {
-        delay,
+        delay: job.minutesBefore,
         jobId: job.eventId,
         removeOnComplete: 10,
         removeOnFail: 10,
       });
 
       console.log(
-        `📅 Reminder scheduled for event ${job.eventId} at ${reminderTime.toISOString()}`,
+        `📅 Reminder scheduled for event ${job.eventId} at ${reminderTime.toISOString()} (${leadMinutes} minutes before event)`,
       );
     } else {
       console.log(

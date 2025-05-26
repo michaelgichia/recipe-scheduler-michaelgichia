@@ -4,6 +4,7 @@ export interface ReminderJob {
   title: string;
   eventTime: string;
   pushToken?: string;
+  minutesBefore?: number
 }
 
 export interface PushNotificationRequest {
