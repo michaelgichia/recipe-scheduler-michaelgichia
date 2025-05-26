@@ -8,6 +8,9 @@ It consists of three main services:
 * **`backend`**: Manages core business logic (e.g., events, devices) and interacts with the database. It also acts as an RPC server for device data.
 * **`reminder-service`**: A dedicated worker service responsible for scheduling and sending event reminders using BullMQ and Expo Push Notifications. It communicates with the `backend` service via RPC to fetch user device tokens.
 
+  
+<img width="1483" alt="Screenshot 2025-05-26 at 22 13 45" src="https://github.com/user-attachments/assets/7be85cc5-6dbd-4da7-b07d-fd64ad00b859" />
+
 ---
 
 ## Prerequisites
