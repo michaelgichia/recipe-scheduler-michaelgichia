@@ -10,6 +10,16 @@ import {
 import { firstValueFrom } from 'rxjs';
 import { ClientProxy } from '@nestjs/microservices';
 
+interface NotificationResult {
+  pushToken: string;
+  result: {
+    success: boolean;
+    data?: unknown;
+    message?: string;
+    error?: string;
+  };
+}
+
 @Injectable()
 export class NotificationService {
   private readonly expo: Expo;
@@ -34,9 +44,7 @@ export class NotificationService {
     }
   }
 
-  async sendPushNotification(
-    payload: PushNotificationPayload,
-  ): Promise<ApiResponse<any>> {
+  async sendPushNotification(payload: PushNotificationPayload) {
     try {
       if (this.mockMode) {
         const mockNotification = {
@@ -71,16 +79,12 @@ export class NotificationService {
         sound: 'default',
       };
 
-      const chunks = this.expo.chunkPushNotifications([
-        message,
-      ]) as ExpoPushMessage[][];
+      const chunks = this.expo.chunkPushNotifications([message]);
       const tickets: ExpoPushTicket[] = [];
 
       for (const chunk of chunks) {
         try {
-          const ticketChunk = (await this.expo.sendPushNotificationsAsync(
-            chunk,
-          )) as ExpoPushTicket[];
+          const ticketChunk = await this.expo.sendPushNotificationsAsync(chunk);
           tickets.push(...ticketChunk);
         } catch (error) {
           console.error('Error sending push notification chunk:', error);
@@ -106,7 +110,7 @@ export class NotificationService {
     title: string,
     body: string,
     data?: Record<string, unknown>,
-  ): Promise<ApiResponse<any>> {
+  ): Promise<ApiResponse<NotificationResult[]>> {
     try {
       const response = await firstValueFrom(
         this.backendServiceClient.send<ApiResponse<Device[]>>(
@@ -123,7 +127,7 @@ export class NotificationService {
       }
 
       const pushTokens = response.data.map((device) => device.pushToken);
-      const results = [];
+      const results: NotificationResult[] = [];
 
       for (const pushToken of pushTokens) {
         const result = await this.sendPushNotification({
@@ -135,7 +139,12 @@ export class NotificationService {
 
         results.push({
           pushToken,
-          result,
+          result: {
+            success: result.success,
+            data: result.data,
+            message: result.message,
+            error: result.error,
+          },
         });
       }
 

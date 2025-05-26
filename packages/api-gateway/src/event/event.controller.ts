@@ -22,7 +22,7 @@ import {
 } from '@microservice/shared';
 @Controller('events')
 export class EventController {
-  constructor(@Inject('EVENT_SERVICE') private eventService: ClientProxy) {}
+  constructor(@Inject('BACKEND_SERVICE') private eventService: ClientProxy) {}
 
   @Post()
   async createEvent(@Body() createEventDto: CreateEventDto): Promise<Event> {

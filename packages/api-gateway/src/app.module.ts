@@ -7,11 +7,11 @@ import { DeviceController } from './device/device.controller';
   imports: [
     ClientsModule.register([
       {
-        name: 'EVENT_SERVICE',
+        name: 'BACKEND_SERVICE',
         transport: Transport.TCP,
         options: {
-          host: process.env.EVENT_SERVICE_HOST || 'event-service',
-          port: parseInt(process.env.EVENT_SERVICE_PORT || '3001'),
+          host: process.env.BACKEND_SERVICE_HOST || 'event-service',
+          port: parseInt(process.env.BACKEND_SERVICE_PORT || '3001'),
         },
       },
     ]),

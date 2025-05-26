@@ -17,7 +17,7 @@ import {
 } from '@microservice/shared';
 @Controller('devices')
 export class DeviceController {
-  constructor(@Inject('EVENT_SERVICE') private deviceService: ClientProxy) {}
+  constructor(@Inject('BACKEND_SERVICE') private deviceService: ClientProxy) {}
 
   @Post()
   async createDevice(
