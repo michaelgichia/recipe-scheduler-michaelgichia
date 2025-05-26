@@ -4,16 +4,16 @@ import { QUEUE_NAMES } from '@microservice/shared';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 
-import { ReminderProcessor } from './processors/reminder.processor';
+import {
+  ReminderProcessor,
+  ReminderEventsListener,
+} from './processors/reminder.processor';
 import { WorkerController } from './controllers/worker.controller';
 import { NotificationService } from './services/notification.service';
 import { QueueService } from './services/queue.service';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-    }),
     BullModule.forRoot({
       connection: {
         host: process.env.REDIS_HOST || 'redis',
@@ -44,6 +44,11 @@ import { QueueService } from './services/queue.service';
     ]),
   ],
   controllers: [WorkerController],
-  providers: [ReminderProcessor, NotificationService, QueueService],
+  providers: [
+    ReminderProcessor,
+    NotificationService,
+    QueueService,
+    ReminderEventsListener,
+  ],
 })
 export class AppModule {}

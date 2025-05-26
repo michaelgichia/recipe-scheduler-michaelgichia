@@ -1,4 +1,10 @@
-import { Processor, WorkerHost } from '@nestjs/bullmq';
+import {
+  WorkerHost,
+  Processor,
+  QueueEventsHost,
+  QueueEventsListener,
+  OnQueueEvent,
+} from '@nestjs/bullmq';
 import { Logger } from '@nestjs/common';
 import { Job } from 'bullmq';
 import { QUEUE_NAMES, ReminderJob } from '@microservice/shared';
@@ -10,6 +16,7 @@ export class ReminderProcessor extends WorkerHost {
 
   constructor(private readonly notificationService: NotificationService) {
     super();
+    this.logger.log('ReminderProcessor initialized');
   }
 
   async process(job: Job<ReminderJob>) {
@@ -66,5 +73,13 @@ export class ReminderProcessor extends WorkerHost {
       );
       throw error;
     }
+  }
+}
+
+@QueueEventsListener(QUEUE_NAMES.REMINDER)
+export class ReminderEventsListener extends QueueEventsHost {
+  @OnQueueEvent('active')
+  onActive(job: { jobId: string; prev?: string }) {
+    console.log(`Processing job ${job.jobId}...`);
   }
 }

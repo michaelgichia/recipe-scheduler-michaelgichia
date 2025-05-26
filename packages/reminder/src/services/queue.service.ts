@@ -11,7 +11,7 @@ export class QueueService {
   ) {}
 
   async scheduleReminder(job: ReminderJob): Promise<void> {
-    const leadMinutes = parseInt(process.env.REMINDER_LEAD_MINUTES || '15');
+    const leadMinutes = parseInt(process.env.REMINDER_LEAD_MINUTES || '0');
     const eventTime = new Date(job.eventTime);
     const reminderTime = new Date(
       eventTime.getTime() - leadMinutes * 60 * 1000,
