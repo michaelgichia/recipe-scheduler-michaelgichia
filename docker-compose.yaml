@@ -60,11 +60,11 @@ services:
       - subscriber_data:/app/packages/backend/data
     command: npm run start:dev
 
-  reminder:
+  reminder-service:
     build:
       context: .
       dockerfile: packages/reminder/Dockerfile
-    container_name: microservice-reminder
+    container_name: microservice-reminder-service
     ports:
       - "3003:3003"
     environment:
