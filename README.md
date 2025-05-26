@@ -1,3 +1,5 @@
+# Microservice Event Reminder System
+
 This project demonstrates a microservices architecture using NestJS, BullMQ (for asynchronous job processing), Redis (as the BullMQ backend), and SQLite3 (for local data persistence).
 
 It consists of three main services:
